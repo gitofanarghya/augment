@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { appService } from './app.service';
 import { Apartment } from '../Apartment/Apartment';
 import { LoginPage } from '../Login/LoginPage';
+import { SleepTime } from '../Notifications/SleepTime';
 
 const styles = theme => ({
     
@@ -30,7 +31,8 @@ class App extends React.Component {
                     <NavBar>
                         {
                           this.props.currentPage === 'Dashboard' && <Dashboard companyName={this.props.company} setApartment={this.setApartment} center={this.props.center} org={this.props.org} company={this.props.org.filter(c => c.name === this.props.company)[0]} setCenter={this.props.setCenter} setCompany={this.props.setCompany}/> ||
-                          this.props.currentPage === 'Apartment' && <Apartment/>
+                          this.props.currentPage === 'Apartment' && <Apartment/> ||
+                          this.props.currentPage === 'Notifications' && <SleepTime />
                         }
                     </NavBar> :
                     <LoginPage />}

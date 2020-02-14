@@ -9,7 +9,8 @@ const initialState = {
     apartmentObj: '',
     motionData: [],
     period: '1hr',
-    loggedIn: false
+    loggedIn: true,
+    sleepData: []
 }
 
 export function app(state, action) {
@@ -17,6 +18,12 @@ export function app(state, action) {
         return initialState
     }
     switch (action.type) {
+
+        case 'get_soft_notification_details_success':
+            return {
+                ...state,
+                sleepData: action.json
+            }
 
         case 'direct_logout':
             return {
@@ -82,7 +89,7 @@ export function app(state, action) {
             return {
                 ...state,
                 apartment: action.apartment,
-                currentPage: 'Apartment',
+                currentPage: state.currentPage === 'Dashboard' ? 'Apartment' : state.currentPage,
                 period: '1hr',
                 apartmentObj: state.org.filter(c => c.name === state.company)[0].centers.filter(c => c.name === state.center)[0].apartments.filter(a => a.name === action.apartment)[0]
             }
@@ -90,7 +97,8 @@ export function app(state, action) {
         case 'CHANGE_PAGE':
             return {
                 ...state,
-                currentPage: action.page
+                currentPage: action.page,
+                sleepData: []
             }
         default:
             return state

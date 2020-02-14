@@ -75,6 +75,7 @@ class Apartment extends React.Component {
         }
     }
 
+
     render() {
         const { classes } = this.props
 
@@ -111,7 +112,7 @@ class Apartment extends React.Component {
                         </CardActionArea>
                     </Card>
 
-                    <Card className={classes.notifications}>
+                    <Card className={classes.notifications} >
 
                         <div className={classes.notif} style={{borderBottom: '1px solid lightgrey', borderRight: '1px solid lightgrey'}}>
                             <Typography gutterBottom variant="h5" component="h2" >
@@ -120,13 +121,15 @@ class Apartment extends React.Component {
                             <Typography variant="body2" color="textSecondary" component="p">
                                 {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count}
                             </Typography></div>
-                        <div className={classes.notif} style={{borderRight: '1px solid lightgrey'}}>
+                        <div className={classes.notif} style={{borderRight: '1px solid lightgrey'}} >
                             <Typography gutterBottom variant="h5" component="h2">
                                 Sleep Time
                                 </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count}
-                            </Typography></div>
+                                
+                                <Button variant='contained' color='primary' onClick={() => this.props.notificationDetails(this.props.apartmentObj.hubID)}>{this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count}</Button>
+                            </Typography>
+                             </div>
                         <div className={classes.notif} style={{borderBottom: '1px solid lightgrey'}}>
                             <Typography gutterBottom variant="h5" component="h2">
                                 Bathroom Visits
@@ -146,19 +149,20 @@ class Apartment extends React.Component {
 
                 </div>
                     <PeriodSelector period={this.props.period} setPeriod={this.setPeriod}/>
-                <div className={classes.motionGraph}>
+                    <div className={classes.motionGraph}>
                     <ActivityGraph />
                 </div>
+                
             </div>
         )
     }
 }
 
 function mapStateToProps(state) {
-    const { org, company, center, apartment, apartmentObj, period } = state.app
+    const { org, company, center, apartment, apartmentObj, period, currentPage } = state.app
 
     return {
-        org, company, center, apartment, apartmentObj, period
+        org, company, center, apartment, apartmentObj, period, currentPage
     }
 }
 
@@ -185,6 +189,17 @@ const mapDispatchToProps = (dispatch) => ({
                 dispatch({type: 'get_motion_data_failure', error})
             })
 
+    },
+    notificationDetails: (hubID) => {
+        dispatch({type: 'CHANGE_PAGE', page: 'Notifications'})
+        dispatch({type: 'get_soft_notification_details_request'})
+        appService.getSoftNotificationDetails(hubID)
+            .then(json => {
+                dispatch({type: 'get_soft_notification_details_success', json})
+            }, error => {
+                dispatch({type: 'get_soft_notification_details_failure', error})
+            })
+        
     }
 
 })

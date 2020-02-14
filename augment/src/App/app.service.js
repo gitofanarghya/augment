@@ -1,7 +1,19 @@
 export const appService = {
     getOrg,
-    getMotionData
+    getMotionData,
+    getSoftNotificationDetails
 };
+ 
+function getSoftNotificationDetails(id) {
+    const requestOptions = {
+        method: 'GET',
+        mode: 'cors',
+        body: null
+    }
+
+    return fetch(`https://augment-api.azurewebsites.net/sleepTimeDaily?hubID=${id}`, requestOptions)
+        .then(handleResponse) 
+}
 
 function getMotionData(id, ts) {
     const requestOptions = {
