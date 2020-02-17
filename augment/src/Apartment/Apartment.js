@@ -29,7 +29,7 @@ const styles = theme => ({
     },
     personal: {
         display: 'flex',
-        margin: '0 10px 0 10px'
+        margin: '0 0 10px 10px'
     },
     media: {
         width: 100,
@@ -48,7 +48,8 @@ const styles = theme => ({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        marginRight: 10
+        marginLeft: 10,
+        marginBottom: 10
     },
 
 })
