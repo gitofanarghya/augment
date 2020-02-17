@@ -9,7 +9,7 @@ const initialState = {
     apartmentObj: '',
     motionData: [],
     period: '1hr',
-    loggedIn: false,
+    loggedIn: true,
     sleepData: []
 }
 

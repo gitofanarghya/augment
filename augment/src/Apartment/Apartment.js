@@ -6,7 +6,7 @@ import CenterSelector from '../Dashboard/CenterSelector'
 import ApartmentSelector from './ApartmentSelector'
 import PeriodSelector from './PeriodSelector'
 import { ActivityGraph } from './MotionGraph'
-import { Paper, Card, CardActionArea, CardMedia, CardContent, Typography, Button, CardActions } from '@material-ui/core';
+import { Paper, Card, CardContent, Typography, Button } from '@material-ui/core';
 import { appService } from '../App/app.service';
 import { SleepTime } from './SleepTime';
 
@@ -29,7 +29,8 @@ const styles = theme => ({
     },
     personal: {
         display: 'flex',
-        margin: '0 0 10px 10px'
+        margin: '0 0 10px 10px',
+        width: '15%'
     },
     media: {
         width: 100,
@@ -49,7 +50,8 @@ const styles = theme => ({
         alignItems: 'center',
         padding: 10,
         marginLeft: 10,
-        marginBottom: 10
+        marginBottom: 10,
+        width: '13.2%'
     },
 
 })
@@ -91,7 +93,7 @@ class Apartment extends React.Component {
         if (minutes < 10) {
             minutes = "0" + minutes;
         }
-        return `${hours} hrs ${minutes} mins`
+        return `${hours}H ${minutes}m`
     }
 
     lastContactFormatter = (d) => {
@@ -100,9 +102,9 @@ class Apartment extends React.Component {
         var m = Math.floor(d % 3600 / 60);
         var s = Math.floor(d % 3600 % 60);
 
-        var hDisplay = h > 0 ? h + (h == 1 ? " hr " : " hrs ") : "";
-        var mDisplay = m > 0 ? m + (m == 1 ? " min " : " mins ") : "";
-        var sDisplay = s > 0 ? s + (s == 1 ? " s" : " s") : "";
+        var hDisplay = h > 0 ? h + (h == 1 ? "H " : "H ") : "";
+        var mDisplay = m > 0 ? m + (m == 1 ? "m " : "m ") : "";
+        var sDisplay = s > 0 ? s + (s == 1 ? "s" : "s") : "";
         return hDisplay + mDisplay + sDisplay + ' ago';
     }
 
