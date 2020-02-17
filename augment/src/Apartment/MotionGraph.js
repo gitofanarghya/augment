@@ -28,14 +28,14 @@ class ActivityGraph extends React.Component {
 
     const motion = graphEvents ? graphEvents.map(e => ({ zone: e.area, x: new Date(e.ts*1000), y: e.motion })) : []
 
-    Array.from(new Set(motion.map(e => e.zone))).map((z, i) => {
+    Array.from(new Set(motion.map(e => e.zone))).filter(z => z !== 'unassigned-sensor' && z !== 'door').map((z, i) => {
       const zone = z.replace(/ /g,'')
       bb.generate({
         size: {
-          height: 85
+          height: 60
         },
         data: {
-          color: function(color, d) { return '#54AAB3' },
+          color: function(color, d) { return '#F191AC' },
           x: 'x',
           columns: [
             ['x', ...motion.filter(e => e.zone === z).map(e => e.x)],
@@ -65,7 +65,7 @@ class ActivityGraph extends React.Component {
                 max: 5
               },
             },
-            //extent: [new Date(Date.now() - (86400000)), new Date(Date.now())]
+            extent: this.props.period === '1hr' ? [new Date(Date.now() - 3600000), new Date(Date.now())] : this.props.period === '3hrs' ? [new Date(Date.now() - 10800000), new Date(Date.now())] : this.props.period === '6hrs' ? [new Date(Date.now() - 21600000), new Date(Date.now())] : [new Date(Date.now() - (86400000)), new Date(Date.now())]
           },
           y: {
             show: false
@@ -91,13 +91,14 @@ class ActivityGraph extends React.Component {
 
     return (
       <Fragment>
-        {motion === [] ? <div style={{display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>No events to show</div> : Array.from(new Set(motion.map(e => e.zone))).map((z, i) =>
-          <Paper key={z.replace(/ /g,'')} style={{ padding: '5px', marginBottom: '1%', overflow: 'hidden', width: '100%' }}>
+        {motion === [] ? <div style={{display: 'flex', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>No events to show</div> : 
+        Array.from(new Set(motion.map(e => e.zone))).filter(z => z !== 'unassigned-sensor' && z !== 'door').map((z, i) =>
+          <div key={z.replace(/ /g,'')} style={{ padding: '5px', marginBottom: '1%', overflow: 'hidden', width: '100%' }}>
             <div key={z.replace(/ /g,'')}>
-              <div style={{ paddingLeft: '10px' }}>{z}</div>
-              <div id={z.replace(/ /g,'')}></div>
+              <div style={{ paddingLeft: '10px', marginTop: -10 }}>{z}</div>
+              <div id={z.replace(/ /g,'')} style={{marginBottom: -10}}></div>
             </div>
-          </Paper>
+          </div>
         )}
       </Fragment>
     )

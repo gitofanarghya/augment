@@ -52,6 +52,12 @@ const styles = theme => ({
   selected: {
     backgroundColor: '#54AAB3 !important',
     color: '#ffffff !important'
+  },
+  toolbarRoot: {
+    background: 'url(logo.png)',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: 'center'
   }
 });
 
@@ -109,10 +115,10 @@ class ResponsiveDrawer extends React.Component {
               className={classes.menuButton}
             >
               <MenuIcon />
-            </IconButton> */}
+            </IconButton> 
             <Typography variant="h5" color="inherit" noWrap>
               Oncierre
-            </Typography>
+            </Typography> */}
           </Toolbar>
         </AppBar>
         {/* <nav className={classes.drawer}>

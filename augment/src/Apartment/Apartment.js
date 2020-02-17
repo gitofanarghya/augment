@@ -5,9 +5,10 @@ import CompanySelector from '../Dashboard/CompanySelector'
 import CenterSelector from '../Dashboard/CenterSelector'
 import ApartmentSelector from './ApartmentSelector'
 import PeriodSelector from './PeriodSelector'
-import {ActivityGraph} from './MotionGraph'
+import { ActivityGraph } from './MotionGraph'
 import { Paper, Card, CardActionArea, CardMedia, CardContent, Typography, Button, CardActions } from '@material-ui/core';
 import { appService } from '../App/app.service';
+import { SleepTime } from './SleepTime';
 
 const styles = theme => ({
     root: {
@@ -24,17 +25,14 @@ const styles = theme => ({
     overview: {
         width: '100%',
         display: 'flex',
-        flexWrap: 'wrap',
-        padding: '20px',
-        flexDirection: 'column',
-        height: 250,
-        justifyContent: 'space-evenly'
+        flexWrap: 'wrap'
     },
     personal: {
-        maxWidth: 300,
+        display: 'flex',
+        margin: '0 10px 0 10px'
     },
     media: {
-        height: 70,
+        width: 100,
         backgroundSize: 'contain'
     },
     notifications: {
@@ -44,14 +42,15 @@ const styles = theme => ({
         flexDirection: 'column',
         flexWrap: 'wrap'
     },
-    notif: {
+    card: {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '50%',
-        height: '50%'
-    }
+        padding: 10,
+        marginRight: 10
+    },
+
 })
 
 class Apartment extends React.Component {
@@ -61,18 +60,37 @@ class Apartment extends React.Component {
 
     setApartment = (apartment) => {
         this.props.setApartment(apartment)
-        this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now()/1000) - 3600)
+        this.props.getMotionData(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID, Math.round(Date.now() / 1000) - 3600)
+        this.props.notificationDetails(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID)
     }
 
     setPeriod = (period) => {
         this.props.setPeriod(period)
-        if(period === '1hr') {
-            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now()/1000) - 3600)
-        } else if(period === '3hrs') {
-            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now()/1000) - 10800)
+        if (period === '1hr') {
+            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 3600)
+        } else if (period === '3hrs') {
+            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 10800)
+        } else if (period === '6hrs') {
+            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 21600)
         } else {
-            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now()/1000) - 21600)
+            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 86400)
         }
+    }
+
+    timeFormatter = (time) => {
+        var decimalTimeString = time;
+        var decimalTime = parseFloat(decimalTimeString);
+        decimalTime = decimalTime * 60 * 60;
+        var hours = Math.floor((decimalTime / (60 * 60)));
+        decimalTime = decimalTime - (hours * 60 * 60);
+        var minutes = Math.floor((decimalTime / 60));
+        if (hours < 10) {
+            hours = "0" + hours;
+        }
+        if (minutes < 10) {
+            minutes = "0" + minutes;
+        }
+        return `${hours} hrs ${minutes} mins`
     }
 
 
@@ -89,80 +107,108 @@ class Apartment extends React.Component {
                 </div>
                 <div className={classes.overview}>
                     <Card className={classes.personal}>
-                        <CardActionArea>
-                            <CardMedia
-                                className={classes.media}
-                                image="10170-old-man-icon.png"
-                                title="Old man"
-                            />
-                            <CardContent>
-                                <Typography gutterBottom variant="h5" component="h2">
-                                    {this.props.apartmentObj.resident.name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    Age: {this.props.apartmentObj.resident.age}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    Guardian: {this.props.apartmentObj.resident.guardianName}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary" component="p">
-                                    Guardian Phone: {this.props.apartmentObj.resident.guardianPhoneNumber}
-                                </Typography>
-                            </CardContent>
-                        </CardActionArea>
-                    </Card>
-
-                    <Card className={classes.notifications} >
-
-                        <div className={classes.notif} style={{borderBottom: '1px solid lightgrey', borderRight: '1px solid lightgrey'}}>
-                            <Typography gutterBottom variant="h5" component="h2" >
-                                Active Time
-                                </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count}
-                            </Typography></div>
-                        <div className={classes.notif} style={{borderRight: '1px solid lightgrey'}} >
+                        <CardContent>
                             <Typography gutterBottom variant="h5" component="h2">
-                                Sleep Time
-                                </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                
-                                <Button variant='contained' color='primary' onClick={() => this.props.notificationDetails(this.props.apartmentObj.hubID)}>{this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count}</Button>
+                                {this.props.apartmentObj.resident.name}
                             </Typography>
-                             </div>
-                        <div className={classes.notif} style={{borderBottom: '1px solid lightgrey'}}>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                Bathroom Visits
-                                </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {this.props.apartmentObj.softNotifications.filter(s => s.type === 'bathroomVisits')[0].count}
-                            </Typography></div>
-                        <div className={classes.notif}>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                Location
-                                </Typography>
+                                Age: {this.props.apartmentObj.resident.age}
+                            </Typography>
                             <Typography variant="body2" color="textSecondary" component="p">
-                                {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name}
-                            </Typography></div>
+                                Guardian: {this.props.apartmentObj.resident.guardianName}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary" component="p">
+                                Guardian Phone: {this.props.apartmentObj.resident.guardianPhoneNumber}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2" >
+                            Active Time
+                        </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+                            {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count)}
+                            </Typography>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2">
+                            Bathroom Visits
+                                </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'bathroomVisits')[0].count}
+                        </Typography>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2">
+                            Sleep Time
+                                </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+
+                            {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count)}
+                            </Typography>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2">
+                            Location
+                                </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name}
+                        </Typography>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2" >
+                            Status
+                        </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+                            At Home{/* {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count} */}
+                        </Typography>
+                    </Card>
+
+                    <Card className={classes.card}>
+                        <Typography gutterBottom variant="body2" component="h2" >
+                            Last Contact
+                        </Typography>
+                        <Typography variant="h5" color="textSecondary" component="p">
+                            {this.props.apartmentObj.lastContact && Math.round((Date.now() / 1000 - this.props.apartmentObj.lastContact.ts) / 60)} minutes ago
+                            </Typography>
                     </Card>
 
 
                 </div>
-                    <PeriodSelector period={this.props.period} setPeriod={this.setPeriod}/>
-                    <div className={classes.motionGraph}>
-                    <ActivityGraph />
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+                    <Paper style={{ margin: '10px 0 0 10px', width: '50%' }}>
+                        <Typography variant='h4' style={{ margin: 10, display: 'flex', justifyContent: 'space-between' }}>
+                            Motion Data
+                        <PeriodSelector period={this.props.period} setPeriod={this.setPeriod} />
+                        </Typography>
+
+                        <div style={{ minWidth: '50%' }}>
+                            <ActivityGraph />
+                        </div>
+                    </Paper>
+
+                    <Paper style={{ margin: 10, width: '50%' }}>
+                        <Typography variant='h4' style={{ margin: 10 }}>Sleep Time Trend</Typography>
+                        <SleepTime />
+                    </Paper>
                 </div>
-                
+
+
             </div>
         )
     }
 }
 
 function mapStateToProps(state) {
-    const { org, company, center, apartment, apartmentObj, period, currentPage } = state.app
+    const { org, company, center, apartment, apartmentObj, period, currentPage, centerObj } = state.app
 
     return {
-        org, company, center, apartment, apartmentObj, period, currentPage
+        org, company, center, apartment, apartmentObj, period, currentPage, centerObj
     }
 }
 
@@ -181,25 +227,25 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch({ type: 'set_period', period })
     },
     getMotionData: (hubID, ts) => {
-        dispatch({type: 'get_motion_data_request'})
+        dispatch({ type: 'get_motion_data_request' })
         appService.getMotionData(hubID, ts)
             .then(json => {
-                dispatch({type: 'get_motion_data_success', json})
+                dispatch({ type: 'get_motion_data_success', json })
             }, error => {
-                dispatch({type: 'get_motion_data_failure', error})
+                dispatch({ type: 'get_motion_data_failure', error })
             })
 
     },
     notificationDetails: (hubID) => {
-        dispatch({type: 'CHANGE_PAGE', page: 'Notifications'})
-        dispatch({type: 'get_soft_notification_details_request'})
+        //dispatch({type: 'CHANGE_PAGE', page: 'Notifications'})
+        dispatch({ type: 'get_soft_notification_details_request' })
         appService.getSoftNotificationDetails(hubID)
             .then(json => {
-                dispatch({type: 'get_soft_notification_details_success', json})
+                dispatch({ type: 'get_soft_notification_details_success', json })
             }, error => {
-                dispatch({type: 'get_soft_notification_details_failure', error})
+                dispatch({ type: 'get_soft_notification_details_failure', error })
             })
-        
+
     }
 
 })

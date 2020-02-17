@@ -77,6 +77,13 @@ const mapDispatchToProps = (dispatch) => ({
             }, error => {
                 dispatch({type: 'get_motion_data_failure', error})
             })
+        dispatch({type: 'get_soft_notification_details_request'})
+        appService.getSoftNotificationDetails(hubID)
+            .then(json => {
+                dispatch({type: 'get_soft_notification_details_success', json})
+            }, error => {
+                dispatch({type: 'get_soft_notification_details_failure', error})
+            })
 
     }
 
