@@ -24,6 +24,22 @@ const useStyles = makeStyles(theme => ({
     }
   }));
 
+ const timeFormatter = (time) => {
+    var decimalTimeString = time;
+    var decimalTime = parseFloat(decimalTimeString);
+    decimalTime = decimalTime * 60 * 60;
+    var hours = Math.floor((decimalTime / (60 * 60)));
+    decimalTime = decimalTime - (hours * 60 * 60);
+    var minutes = Math.floor((decimalTime / 60));
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+    return `${hours} hrs ${minutes} mins`
+}
+
 export default function Dashboard(props) {
 
     const classes = useStyles();
@@ -53,13 +69,13 @@ export default function Dashboard(props) {
                                 </div>
                                 <div style={{display: 'flex', padding: 10, flexDirection: 'column'}}>
                                     <div /* style={{color: u.sofNotifications.indication === 'average' ? 'lightgreen' : u.bathroomVisitsLatestReading.indication === 'above average' ? 'orange' : u.bathroomVisitsLatestReading.indication === 'below average' ? 'orange' : 'red'}} */>
-                                        Bathroom Visits - {u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='bathroomVisits')[0].count.toFixed(2)}
+                                        Bathroom Visits - {u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='bathroomVisits')[0].count}
                                     </div>
                                     <div /* style={{color: u.activeTimeLatestReading.indication === 'average' ? 'lightgreen' : u.activeTimeLatestReading.indication === 'above average' ? 'orange' : u.activeTimeLatestReading.indication === 'below average' ? 'orange' : 'red'}} */>
-                                        Active Time - {u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='activeTime')[0].count.toFixed(2)}
+                                        Active Time - {timeFormatter(u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='activeTime')[0].count.toFixed(2))}
                                     </div>
                                     <div /* style={{color: u.sleepTimeLatestReading.indication === 'average' ? 'lightgreen' : u.sleepTimeLatestReading.indication === 'above average' ? 'orange' : u.sleepTimeLatestReading.indication === 'below average' ? 'orange' : 'red'}} */>
-                                        Sleep Time - {u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='sleepTime')[0].count.toFixed(2)}
+                                        Sleep Time - {timeFormatter(u.softNotifications.length !== 0 && u.softNotifications.filter(s => s.type==='sleepTime')[0].count.toFixed(2))}
                                     </div>
                                 </div>
                                 <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>

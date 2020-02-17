@@ -101,7 +101,7 @@ class LoginPage extends React.Component {
             <div style={{height: '100%'}}>
             <AppBar className={classes.AppBar} position="static" color="primary">
                 <Toolbar disableGutters>
-                    <Grid container justify="space-between" alignItems='center' style={{height: '64px'}}>
+                    {/* <Grid container justify="space-between" alignItems='center' style={{height: '64px'}}>
                         <Grid item xs={2} className={classes.bigLogo}>
                             <img src='/logo-new.png' height='100%'/>
                         </Grid>
@@ -128,7 +128,7 @@ class LoginPage extends React.Component {
                         </Grid>
                         <Grid item xs={2}>
                         </Grid> 
-                    </Grid>
+                    </Grid> */}
                 </Toolbar>            
             </AppBar>
             <Grid container direction="row" justify="center" alignItems='center' style={{height: 'calc(100% - 64px)'}}>
