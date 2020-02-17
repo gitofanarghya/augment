@@ -93,6 +93,18 @@ class Apartment extends React.Component {
         return `${hours} hrs ${minutes} mins`
     }
 
+    lastContactFormatter = (d) => {
+        d = Number(d);
+        var h = Math.floor(d / 3600);
+        var m = Math.floor(d % 3600 / 60);
+        var s = Math.floor(d % 3600 % 60);
+
+        var hDisplay = h > 0 ? h + (h == 1 ? " hr " : " hrs ") : "";
+        var mDisplay = m > 0 ? m + (m == 1 ? " min " : " mins ") : "";
+        var sDisplay = s > 0 ? s + (s == 1 ? " s" : " s") : "";
+        return hDisplay + mDisplay + sDisplay + ' ago';
+    }
+
 
     render() {
         const { classes } = this.props
@@ -129,7 +141,7 @@ class Apartment extends React.Component {
                         </Typography>
                         <Typography variant="h5" color="textSecondary" component="p">
                             {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count)}
-                            </Typography>
+                        </Typography>
                     </Card>
 
                     <Card className={classes.card}>
@@ -148,7 +160,7 @@ class Apartment extends React.Component {
                         <Typography variant="h5" color="textSecondary" component="p">
 
                             {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count)}
-                            </Typography>
+                        </Typography>
                     </Card>
 
                     <Card className={classes.card}>
@@ -174,8 +186,8 @@ class Apartment extends React.Component {
                             Last Contact
                         </Typography>
                         <Typography variant="h5" color="textSecondary" component="p">
-                            {this.props.apartmentObj.lastContact && Math.round((Date.now() / 1000 - this.props.apartmentObj.lastContact.ts) / 60)} minutes ago
-                            </Typography>
+                            {this.props.apartmentObj.lastContact && this.lastContactFormatter(Math.round(Date.now() / 1000 - this.props.apartmentObj.lastContact.ts))}
+                        </Typography>
                     </Card>
 
 
