@@ -10,7 +10,8 @@ const initialState = {
     motionData: [],
     period: '1hr',
     loggedIn: true,
-    sleepData: []
+    sleepData: [],
+    lastContact: ''
 }
 
 export function app(state, action) {
@@ -18,6 +19,12 @@ export function app(state, action) {
         return initialState
     }
     switch (action.type) {
+
+        case 'get_last_contact_success':
+            return {
+                ...state,
+                lastContact: action.json[0]
+            }
 
         case 'get_soft_notification_details_success':
             return {

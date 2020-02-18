@@ -21,6 +21,7 @@ class App extends React.Component {
     setApartment = (apartment) => {
         this.props.setApartment(apartment)
         this.props.getMotionData(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID, Math.round(Date.now()/1000) - 3600)
+        this.props.getLastContact(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID)
     }
 
     render() {
@@ -85,7 +86,17 @@ const mapDispatchToProps = (dispatch) => ({
                 dispatch({type: 'get_soft_notification_details_failure', error})
             })
 
+    },
+    getLastContact: (hubID) => {
+        dispatch({type: 'get_last_contact_request', hubID})
+        appService.getLastContact(hubID)
+            .then(json => {
+                dispatch({ type: 'get_last_contact_success', json})
+            }, error => {
+                dispatch({ type: 'get_last_contact_failure'})
+            })
     }
+
 
 })
 

@@ -25,12 +25,12 @@ const styles = theme => ({
     overview: {
         width: '100%',
         display: 'flex',
-        flexWrap: 'wrap'
+        flexWrap: 'nowrap'
     },
     personal: {
         display: 'flex',
         margin: '0 0 10px 10px',
-        width: '15%'
+        minWidth: '15%'
     },
     media: {
         width: 100,
@@ -51,7 +51,8 @@ const styles = theme => ({
         padding: 10,
         marginLeft: 10,
         marginBottom: 10,
-        width: '13.2%'
+        //width: '13.2%',
+        flexGrow: 1
     },
 
 })
@@ -65,6 +66,7 @@ class Apartment extends React.Component {
         this.props.setApartment(apartment)
         this.props.getMotionData(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID, Math.round(Date.now() / 1000) - 3600)
         this.props.notificationDetails(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID)
+        this.props.getLastContact(this.props.centerObj.apartments.filter(a => a.name === apartment)[0].hubID)
     }
 
     setPeriod = (period) => {
@@ -139,57 +141,57 @@ class Apartment extends React.Component {
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" >
+                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
                             Active Time
                         </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
                             {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count)}
                         </Typography>
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2">
+                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
                             Bathroom Visits
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
                             {this.props.apartmentObj.softNotifications.filter(s => s.type === 'bathroomVisits')[0].count}
                         </Typography>
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2">
+                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
                             Sleep Time
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
 
                             {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count)}
                         </Typography>
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2">
+                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
                             Location
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
-                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name}
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name.replace('room', ' room')}
                         </Typography>
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" >
+                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
                             Status
                         </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
                             At Home{/* {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count} */}
                         </Typography>
                     </Card>
 
                     <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" >
+                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
                             Last Contact
                         </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p">
-                            {this.props.apartmentObj.lastContact && this.lastContactFormatter(Math.round(Date.now() / 1000 - this.props.apartmentObj.lastContact.ts))}
+                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                            {this.props.lastContact && this.lastContactFormatter(Math.round(Date.now() / 1000 - this.props.lastContact.ts))}
                         </Typography>
                     </Card>
 
@@ -220,10 +222,10 @@ class Apartment extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { org, company, center, apartment, apartmentObj, period, currentPage, centerObj } = state.app
+    const { org, company, center, apartment, apartmentObj, period, currentPage, centerObj, lastContact } = state.app
 
     return {
-        org, company, center, apartment, apartmentObj, period, currentPage, centerObj
+        org, company, center, apartment, apartmentObj, period, currentPage, centerObj, lastContact
     }
 }
 
@@ -261,6 +263,15 @@ const mapDispatchToProps = (dispatch) => ({
                 dispatch({ type: 'get_soft_notification_details_failure', error })
             })
 
+    },
+    getLastContact: (hubID) => {
+        dispatch({type: 'get_last_contact_request', hubID})
+        appService.getLastContact(hubID)
+            .then(json => {
+                dispatch({ type: 'get_last_contact_success', json})
+            }, error => {
+                dispatch({ type: 'get_last_contact_failure'})
+            })
     }
 
 })

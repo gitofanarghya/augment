@@ -1,8 +1,21 @@
 export const appService = {
     getOrg,
     getMotionData,
-    getSoftNotificationDetails
+    getSoftNotificationDetails,
+    getLastContact
 };
+
+function getLastContact(id) {
+    const requestOptions = {
+        method: 'GET',
+        mode: 'cors',
+        body: null
+    }
+
+    return fetch(`https://augment-api.azurewebsites.net/lastContact?hubID=${id}`, requestOptions)
+        .then(handleResponse) 
+}
+
  
 function getSoftNotificationDetails(id) {
     const requestOptions = {
