@@ -9,8 +9,8 @@ import './index.css'
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: '#54AAB3',
-            dark: '#3c8f98',
+            main: '#F191AC',
+            dark: '#c2185b',
             contrastText: '#ffffff'
         },
         secondary: {

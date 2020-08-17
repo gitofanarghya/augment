@@ -48,8 +48,8 @@ export default function SimpleSelect(props) {
             <MenuItem value="6hrs">
                 <em>6hrs</em>
             </MenuItem>
-            <MenuItem value="24hrs">
-                <em>24hrs</em>
+            <MenuItem value="range">
+                <em>Range</em>
             </MenuItem>
         </Select>
       </FormControl>

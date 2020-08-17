@@ -13,6 +13,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import { Button } from '@material-ui/core';
 
 
 const drawerWidth = 0;
@@ -106,7 +107,7 @@ class ResponsiveDrawer extends React.Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="fixed" color='primary' className={classes.appBar}>
+        <AppBar position="fixed" color='secondary' className={classes.appBar}>
           <Toolbar className={classes.toolbarRoot}>
             {/* <IconButton
               color="inherit"
@@ -119,6 +120,7 @@ class ResponsiveDrawer extends React.Component {
             <Typography variant="h5" color="inherit" noWrap>
               Oncierre
             </Typography> */}
+            <Button color='primary' variant='contained' onClick={this.props.logout} style={{marginLeft: 'auto'}}>logout</Button>
           </Toolbar>
         </AppBar>
         {/* <nav className={classes.drawer}>
@@ -167,6 +169,9 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => ({
     changePage: (page) => {
       dispatch({type: 'CHANGE_PAGE', page})
+    },
+    logout: () => {
+      dispatch({type: 'logout'})
     }
 })
   

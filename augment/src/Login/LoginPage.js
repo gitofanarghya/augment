@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import CardMedia from '@material-ui/core/CardMedia';
 import Grid from '@material-ui/core/Grid';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import { appService } from '../App/app.service';
 
 const styles = theme => ({
     AppBar: {
@@ -84,14 +85,10 @@ class LoginPage extends React.Component {
     }
 
     handleSubmit = (e) => {
-        e.preventDefault();
-        //this.setState({ submitted: true });
+        e.preventDefault()
         const { username, password } = this.state;
-        /* if (username && password) {
-            this.props.login(username, password);
-        } */
-        if(username === 'staging_monitor@oncierre.com' && password === 'Panda201$') {
-            this.props.directLogin()
+        if (username && password) {
+            this.props.login(username, password)
         }
     }
 
@@ -101,40 +98,9 @@ class LoginPage extends React.Component {
             <div style={{height: '100%'}}>
             <AppBar className={classes.AppBar} position="static" color="primary">
                 <Toolbar disableGutters>
-                    {/* <Grid container justify="space-between" alignItems='center' style={{height: '64px'}}>
-                        <Grid item xs={2} className={classes.bigLogo}>
-                            <img src='/logo-new.png' height='100%'/>
-                        </Grid>
-                        <Grid item xs={2} className={classes.smallLogo}>
-                            <img src='/favicon.ico' height='100%'/>
-                        </Grid>
-                        <Grid item xs={2} className={classes.smallerLogo}>
-                            <img src='/favicon.ico' width='100%' height='100%'/>
-                        </Grid>
-                        <Grid item xs={8} className={classes.bigHeading}>
-                            <Typography variant="h3">
-                                Oncierre
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={8} className={classes.smallHeading}>
-                            <Typography variant="h4">
-                            Oncierre
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={8} className={classes.smallerHeading}>
-                            <Typography variant="h5">
-                            Oncierre
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                        </Grid> 
-                    </Grid> */}
                 </Toolbar>            
             </AppBar>
             <Grid container direction="row" justify="center" alignItems='center' style={{height: 'calc(100% - 64px)'}}>
-              {/* <Grid xs={6} item className={classes.mainPic}>
-                <img src='/WarGames-19832-1024x576.jpg' height='100%' width='100%' />
-              </Grid> */}
               <Grid md={3} sm={6} xs={10} item style={{marginTop: 100}}>
               <Card className={classes.card}>
                 <CardMedia
@@ -188,7 +154,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    /* login: (username, password) => {
+    login: (username, password) => {
         dispatch({type: 'login_request'});
         appService.login(username, password)
             .then(json => { 
@@ -197,9 +163,6 @@ const mapDispatchToProps = (dispatch) => ({
                 }, error => {
                     dispatch({type: 'login_failure', error})
                 })
-    }, */
-    directLogin: () => {
-        dispatch({type: 'direct_login'})
     }
 })
 

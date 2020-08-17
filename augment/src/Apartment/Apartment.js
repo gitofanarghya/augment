@@ -9,6 +9,7 @@ import { ActivityGraph } from './MotionGraph'
 import { Paper, Card, CardContent, Typography, Button } from '@material-ui/core';
 import { appService } from '../App/app.service';
 import { SleepTime } from './SleepTime';
+import Time from './Time'
 
 const styles = theme => ({
     root: {
@@ -30,7 +31,8 @@ const styles = theme => ({
     personal: {
         display: 'flex',
         margin: '0 0 10px 10px',
-        minWidth: '15%'
+        minWidth: '15%',
+        flexGrow: 1
     },
     media: {
         width: 100,
@@ -54,10 +56,30 @@ const styles = theme => ({
         //width: '13.2%',
         flexGrow: 1
     },
+    outer: {
+        display: 'flex',
+        width: '100%',
+        flexWrap: 'wrap'
+    },
+    left: {
+        display: 'flex',
+        width: '40%'
+    },
+    right: {
+        display: 'flex',
+        width: '60%',
+        flexWrap: 'wrap'
+    }
 
 })
 
 class Apartment extends React.Component {
+
+    state = {
+        range: false,
+        from: '',
+        to: ''
+    }
 
     componentDidMount = () => {
     }
@@ -73,12 +95,15 @@ class Apartment extends React.Component {
         this.props.setPeriod(period)
         if (period === '1hr') {
             this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 3600)
+            this.setState({...this.state, range: false})
         } else if (period === '3hrs') {
             this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 10800)
+            this.setState({...this.state, range: false})
         } else if (period === '6hrs') {
             this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 21600)
+            this.setState({...this.state, range: false})
         } else {
-            this.props.getMotionData(this.props.apartmentObj.hubID, Math.round(Date.now() / 1000) - 86400)
+            this.setState({...this.state, range: true})
         }
     }
 
@@ -110,6 +135,24 @@ class Apartment extends React.Component {
         return hDisplay + mDisplay + sDisplay + ' ago';
     }
 
+    setToTime = (time) => {
+        this.setState({
+            ...this.state,
+            to: Math.floor(time/1000)
+        })
+    }
+
+    setFromTime = (time) => {
+        this.setState({
+            ...this.state,
+            from: Math.floor(time/1000)
+        })
+    }
+
+    setRange = (e) => {
+        this.props.getMotionDataV2(this.props.apartmentObj.hubID, this.state.from, this.state.to)
+    }
+
 
     render() {
         const { classes } = this.props
@@ -122,7 +165,9 @@ class Apartment extends React.Component {
                     <CenterSelector center={this.props.center} company={this.props.org.filter(c => c.name === this.props.company)[0]} setCenter={this.props.setCenter} />
                     <ApartmentSelector center={this.props.org.filter(c => c.name === this.props.company)[0].centers.filter(c => c.name === this.props.center)[0]} apartment={this.props.apartment} setApartment={this.setApartment} />
                 </div>
-                <div className={classes.overview}>
+                <div className={classes.outer}>
+
+                    <div className={classes.left}>
                     <Card className={classes.personal}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="h2">
@@ -139,82 +184,89 @@ class Apartment extends React.Component {
                             </Typography>
                         </CardContent>
                     </Card>
-
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
-                            Active Time
-                        </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
-                            {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count)}
-                        </Typography>
-                    </Card>
-
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
-                            Bathroom Visits
+                    </div>
+                    <div className={classes.right}>
+                        
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
+                                    Active Time
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
-                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'bathroomVisits')[0].count}
-                        </Typography>
-                    </Card>
-
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
-                            Sleep Time
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                                    {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count)}
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                            </Card>
 
-                            {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count)}
-                        </Typography>
-                    </Card>
-
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
-                            Location
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
+                                    Bathroom Visits
+                                        </Typography>
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                                    {this.props.apartmentObj.softNotifications.filter(s => s.type === 'bathroomVisits')[0].count}
                                 </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
-                            {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name.replace('room', ' room')}
-                        </Typography>
-                    </Card>
+                            </Card>
 
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
-                            Status
-                        </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
-                            At Home{/* {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count} */}
-                        </Typography>
-                    </Card>
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
+                                    Sleep Time
+                                        </Typography>
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
 
-                    <Card className={classes.card}>
-                        <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
-                            Last Contact
-                        </Typography>
-                        <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
-                            {this.props.lastContact && this.lastContactFormatter(Math.round(Date.now() / 1000 - this.props.lastContact.ts))}
-                        </Typography>
-                    </Card>
+                                    {this.timeFormatter(this.props.apartmentObj.softNotifications.filter(s => s.type === 'sleepTime')[0].count)}
+                                </Typography>
+                            </Card>
 
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2" style={{textAlign: 'center'}}>
+                                    Location
+                                        </Typography>
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                                    {this.props.apartmentObj.softNotifications.filter(s => s.type === 'currentLocation')[0].name.replace('room', ' room')}
+                                </Typography>
+                            </Card>
+
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
+                                    Status
+                                </Typography>
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                                    At Home{/* {this.props.apartmentObj.softNotifications.filter(s => s.type === 'activeTime')[0].count} */}
+                                </Typography>
+                            </Card>
+
+                            <Card className={classes.card}>
+                                <Typography gutterBottom variant="body2" component="h2"  style={{textAlign: 'center'}}>
+                                    Last Contact
+                                </Typography>
+                                <Typography variant="h5" color="textSecondary" component="p" style={{textAlign: 'center'}}>
+                                    {this.props.lastContact && this.lastContactFormatter(Math.round(Date.now() / 1000 - this.props.lastContact.ts))}
+                                </Typography>
+                            </Card>
+                        
+                    </div>
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                        <Paper style={{ margin: '10px 0 0 10px', width: '100%' }}>
+                            <Typography variant='h4' style={{ margin: 10, display: 'flex', justifyContent: 'space-between' }}>
+                                Motion Data
+                            <PeriodSelector period={this.props.period} setPeriod={this.setPeriod} />
+                            {this.state.range && <div style={{display: 'flex', alignItems: 'center'}}>
+                                <Time label="From" setTime={this.setFromTime}/>
+                                <Time label="To" setTime={this.setToTime}/>
+                                <Button color='primary' variant='contained' onClick={this.setRange}>Plot</Button>
+                            </div>}
+                            </Typography>
+
+                            <div style={{ minWidth: '100%' }}>
+                                <ActivityGraph />
+                            </div>
+                        </Paper>
+{/* 
+                        <Paper style={{ width: '100%' }}>
+                            <Typography variant='h4' style={{ margin: 10 }}>Sleep Time Trend</Typography>
+                            <SleepTime />
+                        </Paper> */}
+                    </div>
 
                 </div>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                    <Paper style={{ margin: '10px 0 0 10px', width: '50%' }}>
-                        <Typography variant='h4' style={{ margin: 10, display: 'flex', justifyContent: 'space-between' }}>
-                            Motion Data
-                        <PeriodSelector period={this.props.period} setPeriod={this.setPeriod} />
-                        </Typography>
-
-                        <div style={{ minWidth: '50%' }}>
-                            <ActivityGraph />
-                        </div>
-                    </Paper>
-
-                    <Paper style={{ margin: 10, width: '50%' }}>
-                        <Typography variant='h4' style={{ margin: 10 }}>Sleep Time Trend</Typography>
-                        <SleepTime />
-                    </Paper>
-                </div>
-
 
             </div>
         )
@@ -272,6 +324,16 @@ const mapDispatchToProps = (dispatch) => ({
             }, error => {
                 dispatch({ type: 'get_last_contact_failure'})
             })
+    },
+    getMotionDataV2: (hubID, ts1, ts2) => {
+        dispatch({ type: 'get_motion_data_request' })
+        appService.getMotionDataV2(hubID, ts1, ts2)
+            .then(json => {
+                dispatch({ type: 'get_motion_data_success', json })
+            }, error => {
+                dispatch({ type: 'get_motion_data_failure', error })
+            })
+
     }
 
 })

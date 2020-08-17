@@ -15,7 +15,13 @@ const styles = theme => ({
 class App extends React.Component {
     
     componentDidMount = () => {
-        this.props.getOrg()
+        //this.props.getOrg()
+    }
+
+    componentWillReceiveProps = nextProps => {
+        if(this.props.loggedIn === false && nextProps.loggedIn === true) {
+            this.props.getOrg()
+        }
     }
 
     setApartment = (apartment) => {

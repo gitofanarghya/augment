@@ -9,7 +9,7 @@ const initialState = {
     apartmentObj: '',
     motionData: [],
     period: '1hr',
-    loggedIn: true,
+    loggedIn: false,
     sleepData: [],
     lastContact: ''
 }
@@ -32,13 +32,13 @@ export function app(state, action) {
                 sleepData: action.json
             }
 
-        case 'direct_logout':
+        case 'logout':
             return {
                 ...state,
                 loggedIn: false
             }
 
-        case 'direct_login':
+        case 'login_success':
             return {
                 ...state,
                 loggedIn: true
